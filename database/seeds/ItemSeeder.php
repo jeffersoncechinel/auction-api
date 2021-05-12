@@ -121,13 +121,14 @@ class ItemSeeder extends Seeder
 
     public static function period()
     {
-        return rand(5, 20);
+        return rand(1, 5);
     }
 
     protected function finishAt()
     {
-        $dt = new DateTime(date('Y-m-d H:i:s'));
-        $dt->modify("+{$this->period()} minutes");
+        $dt = new DateTime(gmdate('Y-m-d H:i:s'));
+       // $dt->modify("+{$this->period()} minutes");
+        $dt->modify("+{$this->period()} days");
         return $dt->format('Y-m-d H:i:s');
     }
 }

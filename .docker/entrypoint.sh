@@ -5,7 +5,6 @@ cp .env.example .env
 chown -R www-data:www-data .
 composer install
 php artisan key:generate
-php artisan migrate
-php artisan db:seed
+php artisan migrate --seed
 crond
 php-fpm

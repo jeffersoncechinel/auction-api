@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        'App\Console\Commands\AutoBid',
     ];
 
     /**
@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')
         //          ->hourly();
 
-        $schedule->command('autobid:run')->everyMinute()->withoutOverlapping();
+        $schedule->command('autobid:run')->withoutOverlapping(1)->everyMinute();
     }
 
     /**

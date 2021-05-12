@@ -12,14 +12,20 @@ class UserWalletSeeder extends Seeder
      */
     public function run()
     {
-         UserWallet::create([
-            'user_id' => 1,
-            'maximum_amount' => 10,
-        ]);
+        if (!UserWallet::find(1)) {
+            $model = new UserWallet();
+            $model->fill([
+                'user_id' => 1,
+                'maximum_amount' => 100,
+            ])->save();
+        }
 
-        UserWallet::create([
-            'user_id' => 2,
-            'maximum_amount' => 15,
-        ]);
+        if (!UserWallet::find(2)) {
+            $model = new UserWallet();
+            $model->fill([
+                'user_id' => 2,
+                'maximum_amount' => 150,
+            ])->save();
+        }
     }
 }

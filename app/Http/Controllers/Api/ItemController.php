@@ -12,8 +12,6 @@ class ItemController extends Controller
     public function index(Request $request)
     {
         $query = Item::query();
-        $query->whereDate('finished_at', '>=', date('Y-m-d H:i:s'));
-
         if ($searchText = $request->input('searchText')) {
             $query->where('name', 'like', '%' . $searchText . '%');
             $query->orWhere('description', 'like', '%' . $searchText . '%');

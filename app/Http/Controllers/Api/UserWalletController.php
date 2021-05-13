@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\UserWallet;
+use App\Services\Bid\Queries\LastBidByItem;
+use App\Services\UserAutoBidding\Queries\GetAutoBidItemsByUser;
 use App\Services\UserWallet\Actions\IncrementAmount;
 use Auth;
 use Illuminate\Http\Request;
@@ -16,9 +18,29 @@ class UserWalletController extends Controller
 
     public function index()
     {
-        $data = UserWallet::query()->find(Auth::id())->maximum_amount;
+        $maximumAmount = UserWallet::query()->find(Auth::id())->maximum_amount;
+        $items = (new GetAutoBidItemsByUser(Auth::id()))->execute();
 
-        return $this->successResponse(['maximum_amount' => $data]);
+        $data = [];
+        foreach ($items as $item) {
+            $item = $item->item;
+            $bid = (new LastBidByItem())->execute($item->id);
+
+            if ($bid->user_id === Auth::id()) {
+                $item['isWinning'] = true;
+            } else {
+                $item['isWinning'] = false;
+            }
+
+            $data[] = $item;
+        }
+
+        $response = [
+            'maximum_amount' => $maximumAmount,
+            'items' => $data
+        ];
+
+        return $this->successResponse($response);
     }
 
     public function store(Request $request)

@@ -38,7 +38,7 @@ class AutoBid extends Command
      */
     public function handle()
     {
-        while(true) {
+        while (true) {
             (new SetBidsForAllItems())->execute();
             sleep(3);
         }

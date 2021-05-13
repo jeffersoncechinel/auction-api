@@ -11,6 +11,6 @@ class UserAutoBidding extends Model
 
     public function item()
     {
-        return $this->hasOne(Item::class, 'item_id', 'id');
+        return $this->hasOne(Item::class, 'id', 'item_id');
     }
 }

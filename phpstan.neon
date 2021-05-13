@@ -9,6 +9,7 @@ parameters:
     ignoreErrors:
         - '#Call to an undefined static method [a-zA-Z0-9\\_]+::create\(\)#'
        # - '#Function factory invoked with [a-zA-Z0-9\\_] parameters, 0 required.#'
+        - '#Call to an undefined static method [a-zA-Z0-9\\_]+::find\(\)#'
         - '#Call to an undefined static method [a-zA-Z0-9\\_]+::where\(\)#'
         - '#Call to an undefined static method [a-zA-Z0-9\\_]+::rollback\(\)#'
         - '#Call to static method id\(\) on an unknown class Auth#'

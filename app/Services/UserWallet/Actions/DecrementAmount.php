@@ -6,6 +6,10 @@ use App\Models\UserWallet;
 
 class DecrementAmount extends AbstractAction
 {
+    /**
+     * @param int $amount
+     * @return bool
+     */
     public function execute(int $amount = 1)
     {
         $model = UserWallet::query()->find($this->userId);

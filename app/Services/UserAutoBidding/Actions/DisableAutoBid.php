@@ -14,6 +14,11 @@ class DisableAutoBid
         $this->userId = $userId;
     }
 
+    /**
+     * @param int $itemId
+     * @return bool
+     * @throws Exception
+     */
     public function execute(int $itemId)
     {
         $model = UserAutoBidding::query()->where([

@@ -8,7 +8,7 @@ use Exception;
 class SetBidsForAnItem
 {
     /**
-     * @param int $item
+     * @param int $itemId
      * @return bool
      */
     public function execute(int $itemId)

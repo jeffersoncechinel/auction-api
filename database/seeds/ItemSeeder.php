@@ -127,8 +127,8 @@ class ItemSeeder extends Seeder
     protected function finishAt()
     {
         $dt = new DateTime(gmdate('Y-m-d H:i:s'));
-       // $dt->modify("+{$this->period()} minutes");
-        $dt->modify("+{$this->period()} days");
+        $dt->modify("+{$this->period()} minutes");
+       // $dt->modify("+{$this->period()} days");
         return $dt->format('Y-m-d H:i:s');
     }
 }

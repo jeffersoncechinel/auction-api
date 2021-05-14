@@ -16,7 +16,6 @@ class Search
     const SORT_PRICE_ASC = 'asc';
 
     /**
-     * @param $itemId
      * @return LengthAwarePaginator
      */
     public function execute()

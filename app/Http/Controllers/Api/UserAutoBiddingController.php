@@ -38,12 +38,14 @@ class UserAutoBiddingController extends Controller
         }
 
         $data = (new GetItemDetail(Auth::id()))->execute($data['item_id']);
+
         return $this->successResponse($data);
     }
 
     public function show($itemId)
     {
         $status = (new GetAutoBidStatus(Auth::id()))->execute($itemId);
+
         return $this->successResponse(['is_active' => $status]);
     }
 }

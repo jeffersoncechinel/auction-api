@@ -22,9 +22,13 @@ class UserWalletController extends Controller
         $items = (new GetAutoBidItemsByUser(Auth::id()))->execute();
 
         $data = [];
+
         foreach ($items as $item) {
             $item = $item->item;
-            $bid = (new LastBidByItem())->execute($item->id);
+
+           if (! $bid = (new LastBidByItem())->execute($item->id)) {
+               continue;
+           }
 
             if ($bid->user_id === Auth::id()) {
                 $item['isWinning'] = true;
@@ -37,7 +41,7 @@ class UserWalletController extends Controller
 
         $response = [
             'maximum_amount' => $maximumAmount,
-            'items' => $data
+            'items' => $data,
         ];
 
         return $this->successResponse($response);

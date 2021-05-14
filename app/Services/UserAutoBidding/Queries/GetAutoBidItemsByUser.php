@@ -24,7 +24,7 @@ class GetAutoBidItemsByUser
             ->with('item')
             ->where([
                 'user_id' => $this->userId,
-                'is_active' => UserAutoBidding::STATUS_ACTIVE
+                'is_active' => UserAutoBidding::STATUS_ACTIVE,
             ])->get();
     }
 }

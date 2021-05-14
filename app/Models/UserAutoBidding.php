@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class UserAutoBidding
+ * @package App\Models
+ */
 class UserAutoBidding extends Model
 {
     const STATUS_INACTIVE = 0;

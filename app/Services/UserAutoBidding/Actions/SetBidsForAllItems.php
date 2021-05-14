@@ -8,7 +8,6 @@ use Exception;
 class SetBidsForAllItems
 {
     /**
-     * @param int $item
      * @return bool
      */
     public function execute()
@@ -22,6 +21,7 @@ class SetBidsForAllItems
                 (new Create($model->user_id))->execute($model->item_id);
             } catch (Exception $exception) {
                 // log errors some where
+                print_r($exception->getMessage());
             }
         }
 

@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Services\UserAutoBidding\Actions\SetBidsForAllItems;
 use Illuminate\Console\Command;
+use JC\TaskLocker\Locker;
 
 class AutoBid extends Command
 {
@@ -38,6 +39,14 @@ class AutoBid extends Command
      */
     public function handle()
     {
+        $mutex = new Locker(md5(self::class));
+
+        if ($mutex->isLocked()) {
+            return false;
+        }
+
+        $mutex->lock();
+
         while (true) {
             (new SetBidsForAllItems())->execute();
             sleep(3);

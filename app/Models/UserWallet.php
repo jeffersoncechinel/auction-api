@@ -12,9 +12,14 @@ use Illuminate\Database\Eloquent\Model;
 class UserWallet extends Model
 {
     public $incrementing = false;
+
     protected $primaryKey = 'user_id';
     protected $fillable = ['maximum_amount'];
 
+    /**
+     * @param int $value
+     * @return bool
+     */
     public function decrementAmount(int $value = 1)
     {
         if ($this->maximum_amount <= 0 || $this->maximum_amount < $value) {
@@ -26,6 +31,10 @@ class UserWallet extends Model
         return true;
     }
 
+    /**
+     * @param int $value
+     * @return bool
+     */
     public function incrementAmount(int $value = 1)
     {
         $this->maximum_amount += $value;

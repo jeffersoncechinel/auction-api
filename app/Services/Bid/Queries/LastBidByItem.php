@@ -14,8 +14,6 @@ class LastBidByItem
      */
     public function execute($itemId)
     {
-        return Bid::where([
-            'item_id' => $itemId
-        ])->orderBy('id', 'desc')->first();
+        return Bid::where(['item_id' => $itemId])->orderBy('id', 'desc')->first();
     }
 }

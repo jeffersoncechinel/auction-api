@@ -114,6 +114,11 @@ class User implements AuthenticatableContract
     {
     }
 
+    /**
+     * @param $identifier
+     * @param $value
+     * @return array|false|mixed
+     */
     protected function findUser($identifier, $value)
     {
         //identifier: username or token
@@ -126,6 +131,9 @@ class User implements AuthenticatableContract
         return false;
     }
 
+    /**
+     * @return array
+     */
     public function safeData()
     {
         return [

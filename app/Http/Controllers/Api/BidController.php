@@ -14,7 +14,7 @@ class BidController extends Controller
 {
     private $rules = [
         'item_id' => 'required|integer',
-        'amount' => 'required|regex:/^\d*(\.\d{1,2})?$/'
+        'amount' => 'required|regex:/^\d*(\.\d{1,2})?$/',
     ];
 
     public function index()
@@ -34,6 +34,7 @@ class BidController extends Controller
         }
 
         $data = (new GetItemDetail(Auth::id()))->execute($data['item_id']);
+
         return $this->successResponse($data);
     }
 }

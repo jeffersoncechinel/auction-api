@@ -18,8 +18,6 @@ class BidsByUser
      */
     public function execute()
     {
-        return Bid::where([
-            'user_id' => $this->userId
-        ])->count();
+        return Bid::where(['user_id' => $this->userId])->count();
     }
 }

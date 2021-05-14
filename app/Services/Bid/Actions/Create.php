@@ -3,7 +3,7 @@
 namespace App\Services\Bid\Actions;
 
 use App\Models\Bid;
-use App\Services\Bid\Rules\Validator;
+use App\Services\Bid\Validations\Validator;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -17,6 +17,12 @@ class Create
         $this->userId = $userId;
     }
 
+    /**
+     * @param $itemId
+     * @param $amount
+     * @return bool
+     * @throws Exception
+     */
     public function execute($itemId, $amount)
     {
         try {
@@ -24,8 +30,8 @@ class Create
 
             (new Validator($this->userId, $itemId, $amount))
                 ->isBiddingOpen()
-                ->isHighestBid()
-                ->isAmountHigherThanCurrentPrice();
+                ->isUserOutBid()
+                ->isBidAmountHigherThanCurrent();
 
             $this->saveBid($itemId, $amount);
 
@@ -38,6 +44,10 @@ class Create
         return true;
     }
 
+    /**
+     * @param $itemId
+     * @param $amount
+     */
     protected function saveBid($itemId, $amount)
     {
         $model = new Bid();

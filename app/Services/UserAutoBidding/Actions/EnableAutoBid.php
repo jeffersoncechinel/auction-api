@@ -13,6 +13,10 @@ class EnableAutoBid
         $this->userId = $userId;
     }
 
+    /**
+     * @param int $itemId
+     * @return bool
+     */
     public function execute(int $itemId)
     {
         $model = UserAutoBidding::query()->where([

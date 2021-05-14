@@ -4,8 +4,7 @@ namespace App\Services\UserAutoBidding\Actions;
 
 use App\Models\Bid;
 use App\Models\Item;
-use App\Services\Bid\Queries\LastBidByItem;
-use App\Services\Bid\Rules\Validator;
+use App\Services\Bid\Validations\Validator;
 use App\Services\UserWallet\Actions\DecrementAmount;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +19,12 @@ class Create
         $this->userId = $userId;
     }
 
+    /**
+     * @param $itemId
+     * @param int $amount
+     * @return bool
+     * @throws Exception
+     */
     public function execute($itemId, $amount = 1)
     {
         try {
@@ -27,8 +32,8 @@ class Create
 
             (new Validator($this->userId, $itemId, $amount))
                 ->isBiddingOpen()
-                ->isHighestBid()
-                ->isAmountHigherThanCurrentPrice();
+                ->isUserOutBid()
+                ->hasEnoughCreditForAutoBid();
 
             $this->saveBid($itemId, $amount);
 
@@ -41,20 +46,27 @@ class Create
         return true;
     }
 
+    /**
+     * @param $itemId
+     * @param $amount
+     * @throws Exception
+     */
     protected function saveBid($itemId, $amount)
     {
+        // decrement from wallet
+        if (! (new DecrementAmount($this->userId))->execute($amount)) {
+            throw new Exception('Not enough credit for the bid.');
+        }
+
+        $finalPrice = Item::find($itemId)->final_price;
         $model = new Bid();
         $model->item_id = $itemId;
         $model->user_id = $this->userId;
-        $model->amount = $amount;
+        $model->amount = $finalPrice + $amount;
         $model->save();
 
         $model->item->updateFinalPrice($amount);
         $model->item->save();
 
-        // decrement from wallet
-        if (! (new DecrementAmount($this->userId))->execute($amount)) {
-            throw new Exception('Not enough money for the bid.');
-        }
     }
 }

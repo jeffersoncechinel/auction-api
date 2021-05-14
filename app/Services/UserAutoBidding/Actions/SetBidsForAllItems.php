@@ -14,16 +14,16 @@ class SetBidsForAllItems
     {
         $models = UserAutoBidding::where([
             'is_active' => UserAutoBidding::STATUS_ACTIVE,
-        ])->get();
+        ])->get()->toArray();
 
         shuffle($models);
 
         foreach ($models as $model) {
             try {
-                (new Create($model->user_id))->execute($model->item_id);
+                (new Create($model['user_id']))->execute($model['item_id']);
             } catch (Exception $exception) {
                 // log errors some where
-                //print_r($exception->getMessage());
+                echo $exception->getMessage() . PHP_EOL;
             }
 
             sleep(rand(8,10));

@@ -7,6 +7,7 @@ use App\Models\Item;
 use App\Services\Bid\Validations\Rules\HasEnoughCreditForAutoBid;
 use App\Services\Bid\Validations\Rules\IsBiddingOpen;
 use App\Services\Bid\Validations\Rules\IsUserOutBid;
+use App\Services\Item\Queries\GetCurrentPrice;
 use App\Services\UserWallet\Actions\DecrementAmount;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -27,11 +28,12 @@ class Create
      * @return bool
      * @throws Exception
      */
-    public function execute($itemId, $amount = 1)
+    public function execute($itemId)
     {
         try {
             DB::beginTransaction();
 
+            $amount = GetCurrentPrice::execute($itemId) + 1;
             (new IsBiddingOpen($itemId))->execute();
             (new IsUserOutBid($itemId, $this->userId))->execute();
             (new HasEnoughCreditForAutoBid($amount, $this->userId))->execute();
@@ -59,15 +61,13 @@ class Create
             throw new Exception('Not enough credit for the bid.');
         }
 
-        $finalPrice = Item::find($itemId)->final_price;
-
         $model = new Bid();
         $model->item_id = $itemId;
         $model->user_id = $this->userId;
-        $model->amount = $finalPrice + $amount;
+        $model->amount = $amount;
         $model->save();
 
-        $model->item->updateFinalPrice($amount);
+        $model->item->final_price = $amount;
         $model->item->save();
     }
 }

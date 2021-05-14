@@ -33,7 +33,7 @@ class GetItemDetail
         $data = $item->toArray();
         $data['auto_bidding'] = $this->isAutoBidding($itemId);
         $data['history'] = $this->getBidHistory($itemId);
-        $data['finished_at'] = DateTimeHelper::datetimeFromUTC($data['finished_at'], 'America/Sao_Paulo');
+        $data['finished_at'] = DateTimeHelper::datetimeFromUTC($data['finished_at']);
 
         return $data;
     }

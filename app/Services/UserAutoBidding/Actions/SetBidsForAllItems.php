@@ -16,6 +16,8 @@ class SetBidsForAllItems
             'is_active' => UserAutoBidding::STATUS_ACTIVE,
         ])->get();
 
+        shuffle($models);
+
         foreach ($models as $model) {
             try {
                 (new Create($model->user_id))->execute($model->item_id);
@@ -23,6 +25,8 @@ class SetBidsForAllItems
                 // log errors some where
                 //print_r($exception->getMessage());
             }
+
+            sleep(rand(8,10));
         }
 
         return true;

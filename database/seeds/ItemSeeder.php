@@ -10,6 +10,10 @@ class ItemSeeder extends Seeder
      */
     public function run()
     {
+        if ($model = Item::find(1)) {
+            return true;
+        }
+
         Item::create([
             'name' => 'Table Lamp',
             'description' => 'Iluminate your room.',
@@ -121,7 +125,7 @@ class ItemSeeder extends Seeder
 
     public static function period()
     {
-        return rand(1, 5);
+        return rand(5, 500);
     }
 
     protected function finishAt()

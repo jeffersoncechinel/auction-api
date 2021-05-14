@@ -7,6 +7,7 @@ use App\Models\UserWallet;
 use App\Services\Bid\Queries\LastBidByItem;
 use App\Services\UserAutoBidding\Queries\GetAutoBidItemsByUser;
 use App\Services\UserWallet\Actions\IncrementAmount;
+use App\Services\UserWallet\Queries\GetWalletAmount;
 use Auth;
 use Illuminate\Http\Request;
 
@@ -18,7 +19,7 @@ class UserWalletController extends Controller
 
     public function index()
     {
-        $maximumAmount = UserWallet::query()->find(Auth::id())->maximum_amount;
+        $maximumAmount = (new GetWalletAmount(Auth::id()))->execute();
         $items = (new GetAutoBidItemsByUser(Auth::id()))->execute();
 
         $data = [];
@@ -28,12 +29,6 @@ class UserWalletController extends Controller
 
             if (! $bid = LastBidByItem::execute($item->id)) {
                 continue;
-            }
-
-            if ($bid->user_id === Auth::id()) {
-                $item['isWinning'] = true;
-            } else {
-                $item['isWinning'] = false;
             }
 
             $data[] = $item;

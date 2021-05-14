@@ -14,7 +14,7 @@ class Validator
     public $itemId;
     public $amount;
 
-    public function __construct($userId, $itemId, $amount)
+    public function __construct($userId, $itemId, $amount = 1)
     {
         $this->userId = $userId;
         $this->itemId = $itemId;

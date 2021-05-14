@@ -17,6 +17,7 @@ class HasEnoughCreditForAutoBid
     }
 
     /**
+     * @return bool
      * @throws Exception
      */
     public function execute()
@@ -25,5 +26,7 @@ class HasEnoughCreditForAutoBid
         if ((new GetWalletAmount($this->userId))->execute() < $this->amount) {
             throw new Exception('User has not enough credit to bid.');
         }
+
+        return true;
     }
 }

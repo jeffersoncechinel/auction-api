@@ -17,7 +17,7 @@ class IsBidAmountHigherThanCurrent
     }
 
     /**
-     * @return $this
+     * @return bool
      * @throws Exception
      */
     public function execute()
@@ -29,6 +29,6 @@ class IsBidAmountHigherThanCurrent
             }
         }
 
-        return $this;
+        return true;
     }
 }

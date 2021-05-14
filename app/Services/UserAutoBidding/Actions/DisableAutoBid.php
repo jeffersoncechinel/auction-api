@@ -24,6 +24,7 @@ class DisableAutoBid
         $model = UserAutoBidding::query()->where([
             'user_id' => $this->userId,
             'item_id' => $itemId,
+            'is_active' => UserAutoBidding::STATUS_ACTIVE
         ])->first();
 
         if (! $model) {

@@ -19,7 +19,7 @@ class IsBiddingOpen
     }
 
     /**
-     * @return $this
+     * @return bool
      * @throws Exception
      */
     public function execute()
@@ -29,6 +29,6 @@ class IsBiddingOpen
             throw new Exception('The auction for this item has finished.');
         }
 
-        return $this;
+        return true;
     }
 }

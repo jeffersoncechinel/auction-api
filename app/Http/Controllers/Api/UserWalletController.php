@@ -26,9 +26,9 @@ class UserWalletController extends Controller
         foreach ($items as $item) {
             $item = $item->item;
 
-           if (! $bid = (new LastBidByItem())->execute($item->id)) {
-               continue;
-           }
+            if (! $bid = (new LastBidByItem())->execute($item->id)) {
+                continue;
+            }
 
             if ($bid->user_id === Auth::id()) {
                 $item['isWinning'] = true;

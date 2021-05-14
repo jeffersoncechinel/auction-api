@@ -68,6 +68,13 @@ class GetItemDetail
             'item_id' => $itemId,
         ])->orderBy('id', 'desc')->get();
 
-        return $bids;
+        $data = [];
+
+        foreach ($bids as $bid) {
+            $bid->created_at = DateTimeHelper::datetimeFromUTC($bid->created_at);
+            $data[] = $bid;
+        }
+
+        return $data;
     }
 }

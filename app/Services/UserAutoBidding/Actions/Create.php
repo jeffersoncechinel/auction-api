@@ -4,7 +4,9 @@ namespace App\Services\UserAutoBidding\Actions;
 
 use App\Models\Bid;
 use App\Models\Item;
-use App\Services\Bid\Validations\Validator;
+use App\Services\Bid\Validations\Rules\HasEnoughCreditForAutoBid;
+use App\Services\Bid\Validations\Rules\IsBiddingOpen;
+use App\Services\Bid\Validations\Rules\IsUserOutBid;
 use App\Services\UserWallet\Actions\DecrementAmount;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -30,10 +32,9 @@ class Create
         try {
             DB::beginTransaction();
 
-            (new Validator($this->userId, $itemId, $amount))
-                ->isBiddingOpen()
-                ->isUserOutBid()
-                ->hasEnoughCreditForAutoBid();
+            (new IsBiddingOpen($itemId))->execute();
+            (new IsUserOutBid($itemId, $this->userId))->execute();
+            (new HasEnoughCreditForAutoBid($amount, $this->userId))->execute();
 
             $this->saveBid($itemId, $amount);
 
@@ -59,6 +60,7 @@ class Create
         }
 
         $finalPrice = Item::find($itemId)->final_price;
+
         $model = new Bid();
         $model->item_id = $itemId;
         $model->user_id = $this->userId;
@@ -67,6 +69,5 @@ class Create
 
         $model->item->updateFinalPrice($amount);
         $model->item->save();
-
     }
 }

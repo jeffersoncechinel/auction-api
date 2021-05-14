@@ -3,7 +3,9 @@
 namespace App\Services\Bid\Actions;
 
 use App\Models\Bid;
-use App\Services\Bid\Validations\Validator;
+use App\Services\Bid\Validations\Rules\IsBidAmountHigherThanCurrent;
+use App\Services\Bid\Validations\Rules\IsBiddingOpen;
+use App\Services\Bid\Validations\Rules\IsUserOutBid;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -28,10 +30,9 @@ class Create
         try {
             DB::beginTransaction();
 
-            (new Validator($this->userId, $itemId, $amount))
-                ->isBiddingOpen()
-                ->isUserOutBid()
-                ->isBidAmountHigherThanCurrent();
+            (new IsBiddingOpen($itemId))->execute();
+            (new IsUserOutBid($itemId, $this->userId))->execute();
+            (new IsBidAmountHigherThanCurrent($itemId, $amount))->execute();
 
             $this->saveBid($itemId, $amount);
 

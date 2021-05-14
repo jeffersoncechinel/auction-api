@@ -2,6 +2,7 @@
 
 namespace App\Services\Item\Queries;
 
+use App\Common\Helpers\DateTimeHelper;
 use App\Models\Item;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
@@ -11,7 +12,6 @@ class Search
     public $searchText;
     public $priceSort;
     public $perPage = 10;
-
     const SORT_PRICE_DESC = 'desc';
     const SORT_PRICE_ASC = 'asc';
 
@@ -31,6 +31,13 @@ class Search
             $query->orderBy('final_price', $this->priceSort);
         }
 
-        return $query->paginate($this->perPage);
+        $paginator = $query->paginate($this->perPage);
+
+        $paginator->getCollection()->transform(function ($value) {
+            $value->finished_at = DateTimeHelper::datetimeFromUTC($value['finished_at']);
+            return $value;
+        });
+
+        return $paginator;
     }
 }

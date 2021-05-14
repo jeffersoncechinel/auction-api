@@ -6,9 +6,15 @@ use App\Common\Helpers\DateTimeHelper;
 use App\Models\Bid;
 use App\Models\Item;
 use App\Models\UserAutoBidding;
+use App\Services\Bid\Queries\LastBidByItem;
+use App\Services\Bid\Queries\TotalBidsByUserForAnItem;
+use App\Services\Bid\Validations\Rules\IsBiddingOpen;
+use App\Services\Bid\Validations\Rules\IsUserOutBid;
 use Exception;
+use Hamcrest\Core\Is;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\HigherOrderBuilderProxy;
 
 class GetItemDetail
 {
@@ -26,7 +32,7 @@ class GetItemDetail
      */
     public function execute($itemId)
     {
-        if (! $item = Item::query()->find($itemId)) {
+        if (!$item = Item::query()->find($itemId)) {
             throw new Exception('Item doest not exists.');
         }
 
@@ -34,13 +40,14 @@ class GetItemDetail
         $data['auto_bidding'] = $this->isAutoBidding($itemId);
         $data['history'] = $this->getBidHistory($itemId);
         $data['finished_at'] = DateTimeHelper::datetimeFromUTC($data['finished_at']);
+        $data['status'] = $this->getStatus($itemId);
 
         return $data;
     }
 
     /**
      * @param $itemId
-     * @return false|\Illuminate\Database\Eloquent\HigherOrderBuilderProxy|int|mixed
+     * @return false|HigherOrderBuilderProxy|int|mixed
      */
     protected function isAutoBidding($itemId)
     {
@@ -76,5 +83,25 @@ class GetItemDetail
         }
 
         return $data;
+    }
+
+    protected function getStatus($itemId)
+    {
+        if (TotalBidsByUserForAnItem::execute($itemId, $this->userId) < 1) {
+            return 'notbidding';
+        }
+
+        $userOutBid = IsUserOutBid::check($itemId, $this->userId);
+        $isBiddingOpen = IsBiddingOpen::check($itemId);
+
+        if ($userOutBid && !$isBiddingOpen) {
+            return 'lost';
+        } else if ($userOutBid) {
+            return 'loosing';
+        } else if ($isBiddingOpen) {
+            return 'winning';
+        } else {
+            return 'won';
+        }
     }
 }

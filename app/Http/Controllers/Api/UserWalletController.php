@@ -26,7 +26,7 @@ class UserWalletController extends Controller
         foreach ($items as $item) {
             $item = $item->item;
 
-            if (! $bid = (new LastBidByItem())->execute($item->id)) {
+            if (! $bid = LastBidByItem::execute($item->id)) {
                 continue;
             }
 

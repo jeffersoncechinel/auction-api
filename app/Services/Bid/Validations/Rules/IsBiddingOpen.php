@@ -31,4 +31,15 @@ class IsBiddingOpen
 
         return true;
     }
+
+    public static function check($itemId)
+    {
+        try {
+            (new self($itemId))->execute();
+        } catch (Exception $exception) {
+            return false;
+        }
+
+        return true;
+    }
 }

@@ -29,4 +29,15 @@ class HasEnoughCreditForAutoBid
 
         return true;
     }
+
+    public static function check($amount, $userId)
+    {
+        try {
+            (new self($amount, $userId))->execute();
+        } catch (Exception $exception) {
+            return false;
+        }
+
+        return true;
+    }
 }

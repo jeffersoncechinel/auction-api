@@ -12,7 +12,7 @@ class LastBidByItem
      * @param $itemId
      * @return Bid|Builder|Model|\Illuminate\Database\Query\Builder|object|null
      */
-    public function execute($itemId)
+    public static function execute($itemId)
     {
         return Bid::where(['item_id' => $itemId])->orderBy('id', 'desc')->first();
     }

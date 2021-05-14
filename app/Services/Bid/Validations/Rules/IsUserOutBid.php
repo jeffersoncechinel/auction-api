@@ -22,10 +22,21 @@ class IsUserOutBid
      */
     public function execute()
     {
-        if ($bid = (new LastBidByItem())->execute($this->itemId)) {
+        if ($bid = LastBidByItem::execute($this->itemId)) {
             if ($bid->user_id === $this->userId) {
                 throw new Exception('You already have the highest bid for this item.');
             }
+        }
+
+        return true;
+    }
+
+    public static function check($itemId, $userId)
+    {
+        try {
+            (new self($itemId, $userId))->execute();
+        } catch (Exception $exception) {
+            return false;
         }
 
         return true;

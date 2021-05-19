@@ -6,6 +6,8 @@ services:
         build: .
         container_name: auction-app
         entrypoint: dockerize -wait tcp://db:3306 -timeout 40s ./.docker/entrypoint.sh
+        ports:
+          - "6001:6001"
         volumes:
             - .:/var/www
         networks:
@@ -13,6 +15,8 @@ services:
         depends_on:
             - db
             - redis
+        links:
+          - "redis"
 
     nginx:
         build: .docker/nginx
@@ -44,6 +48,14 @@ services:
             # - MYSQL_USER=root
         networks:
             - app-network
+        links:
+          - "redis"
+    redis:
+      container_name: auction-redis
+      image: redis:alpine3.12
+      networks:
+        - app-network
+      restart: always
 networks:
     app-network:
         driver: bridge

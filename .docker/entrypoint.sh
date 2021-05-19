@@ -6,5 +6,4 @@ chown -R www-data:www-data .
 composer install
 php artisan key:generate
 php artisan migrate --seed
-crond
-php-fpm
+supervisord -c /etc/supervisor/conf.d/supervisor.conf

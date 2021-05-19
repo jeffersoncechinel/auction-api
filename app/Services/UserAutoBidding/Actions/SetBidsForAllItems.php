@@ -26,7 +26,7 @@ class SetBidsForAllItems
                 echo $exception->getMessage() . PHP_EOL;
             }
 
-            sleep(rand(8,10));
+            sleep(rand(8, 10));
         }
 
         return true;

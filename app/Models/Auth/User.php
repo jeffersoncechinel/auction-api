@@ -13,7 +13,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
  */
 class User implements AuthenticatableContract
 {
-    private $username;
+    public $username;
     private $password;
 
     protected function getUsers()
@@ -132,12 +132,29 @@ class User implements AuthenticatableContract
     }
 
     /**
+     * @param $id
+     * @return $this|null
+     */
+    public function findById($id)
+    {
+        if (! $user = $this->findUser('id', $id)) {
+            return null;
+        }
+
+        $this->id = $user['id'];
+        $this->username = $user['username'];
+        $this->name = $user['name'];
+
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function safeData()
     {
         return [
-            'name' => $this->name,
+            'name' => $this->username,
             'token' => $this->token,
         ];
     }

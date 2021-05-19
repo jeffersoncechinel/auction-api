@@ -16,7 +16,7 @@ class GetCurrentPrice
      */
     public static function execute($itemId)
     {
-        if (!$item = Item::query()->find($itemId)) {
+        if (! $item = Item::query()->find($itemId)) {
             throw new Exception('Item doest not exists.');
         }
 

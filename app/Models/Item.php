@@ -3,10 +3,9 @@
 namespace App\Models;
 
 use App\Common\Helpers\DateTimeHelper;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Class Item
@@ -18,23 +17,32 @@ class Item extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'name', 'description', 'image_url', 'initial_price',
-        'final_price', 'started_at', 'finished_at'
+        'name',
+        'description',
+        'image_url',
+        'initial_price',
+        'final_price',
+        'started_at',
+        'finished_at',
     ];
-
     protected $dates = ['deleted_at'];
 
+    public static function canBid($id)
+    {
+        return self::where(['id' => $id])->where('finished_at', '>=', DateTimeHelper::now())->first();
+    }
+
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function bids()
     {
         return $this->hasMany(Bid::class, 'item_id', 'id');
     }
 
-    public static function canBid($id)
+    public function userAutoBiddings()
     {
-        return self::where(['id' => $id])->where('finished_at', '>=', DateTimeHelper::now())->first();
+        return $this->hasMany(UserAutoBidding::class, 'item_id', 'id');
     }
 
     /**

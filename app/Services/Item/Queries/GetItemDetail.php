@@ -3,12 +3,10 @@
 namespace App\Services\Item\Queries;
 
 use App\Common\Helpers\DateTimeHelper;
+use App\Models\Auth\User;
 use App\Models\Bid;
 use App\Models\Item;
 use App\Models\UserAutoBidding;
-use App\Services\Bid\Queries\TotalBidsByUserForAnItem;
-use App\Services\Bid\Validations\Rules\IsBiddingOpen;
-use App\Services\Bid\Validations\Rules\IsUserOutBid;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -30,7 +28,7 @@ class GetItemDetail
      */
     public function execute($itemId)
     {
-        if (!$item = Item::query()->find($itemId)) {
+        if (! $item = Item::query()->with('bids')->find($itemId)) {
             throw new Exception('Item doest not exists.');
         }
 
@@ -38,7 +36,9 @@ class GetItemDetail
         $data['auto_bidding'] = $this->isAutoBidding($itemId);
         $data['history'] = $this->getBidHistory($itemId);
         $data['finished_at'] = DateTimeHelper::datetimeFromUTC($data['finished_at']);
-        $data['status'] = $this->getStatus($itemId);
+        $data['last_bid_by'] = $this->getLastBidUser($item);
+        unset($item['bids']);
+        // $data['status'] = $this->getStatus($itemId);
 
         return $data;
     }
@@ -83,23 +83,13 @@ class GetItemDetail
         return $data;
     }
 
-    protected function getStatus($itemId)
+    public function getLastBidUser($item)
     {
-        if (TotalBidsByUserForAnItem::execute($itemId, $this->userId) < 1) {
-            return 'notbidding';
-        }
-
-        $userOutBid = IsUserOutBid::check($itemId, $this->userId);
-        $isBiddingOpen = IsBiddingOpen::check($itemId);
-
-        if ($userOutBid && !$isBiddingOpen) {
-            return 'lost';
-        } else if ($userOutBid) {
-            return 'loosing';
-        } else if ($isBiddingOpen) {
-            return 'winning';
+        if (isset($item['bids'][0])) {
+            $bid = array_values(array_slice($item['bids']->toArray(), -1))[0];
+            return (new User())->findById($bid['user_id'])->username;
         } else {
-            return 'won';
+            return null;
         }
     }
 }

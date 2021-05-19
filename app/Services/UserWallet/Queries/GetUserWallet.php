@@ -5,7 +5,7 @@ namespace App\Services\UserWallet\Queries;
 use App\Models\UserWallet;
 use Illuminate\Database\Eloquent\HigherOrderBuilderProxy;
 
-class GetWalletAmount
+class GetUserWallet
 {
     public $userId;
 
@@ -19,14 +19,9 @@ class GetWalletAmount
      */
     public function execute()
     {
-        $data = UserWallet::query()->where([
+        return UserWallet::query()->where([
             'user_id' => $this->userId,
         ])->first();
-
-        if (! $data) {
-            return 0;
-        }
-
-        return $data->maximum_amount;
     }
+
 }

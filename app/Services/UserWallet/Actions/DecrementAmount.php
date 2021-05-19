@@ -14,10 +14,11 @@ class DecrementAmount extends AbstractAction
     {
         $model = UserWallet::query()->find($this->userId);
 
-        if (! $model->decrementAmount($amount)) {
+        if ($model->amount_remaining <= 0 || $model->amount_remaining < $amount) {
             return false;
         }
 
+        $model->amount_remaining -= $amount;
         $model->save();
 
         return true;

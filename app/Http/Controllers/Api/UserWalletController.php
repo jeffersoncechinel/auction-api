@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\UserWallet;
 use App\Services\Bid\Queries\LastBidByItem;
 use App\Services\UserAutoBidding\Queries\GetAutoBidItemsByUser;
+use App\Services\UserWallet\Actions\AddAmount;
 use App\Services\UserWallet\Actions\IncrementAmount;
+use App\Services\UserWallet\Queries\GetUserWallet;
 use App\Services\UserWallet\Queries\GetWalletAmount;
 use Auth;
+use Exception;
 use Illuminate\Http\Request;
 
 class UserWalletController extends Controller
@@ -19,7 +22,7 @@ class UserWalletController extends Controller
 
     public function index()
     {
-        $maximumAmount = (new GetWalletAmount(Auth::id()))->execute();
+        $wallet = (new GetUserWallet(Auth::id()))->execute();
         $items = (new GetAutoBidItemsByUser(Auth::id()))->execute();
 
         $data = [];
@@ -35,7 +38,8 @@ class UserWalletController extends Controller
         }
 
         $response = [
-            'maximum_amount' => $maximumAmount,
+            'maximum_amount' => $wallet->maximum_amount,
+            'amount_remaining' => $wallet->amount_remaining,
             'items' => $data,
         ];
 
@@ -45,7 +49,13 @@ class UserWalletController extends Controller
     public function store(Request $request)
     {
         $data = $this->validate($request, $this->rules);
-        $model = (new IncrementAmount(Auth::id()))->execute($data['amount']);
+
+        try {
+            $model = (new AddAmount(Auth::id()))->execute($data['amount']);
+        } catch (Exception $exception) {
+            return $this->errorResponse($exception->getMessage());
+        }
+
 
         return $this->successResponse($model);
     }

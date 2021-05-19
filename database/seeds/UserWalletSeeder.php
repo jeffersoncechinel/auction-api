@@ -16,7 +16,8 @@ class UserWalletSeeder extends Seeder
             $model = new UserWallet();
             $model->fill([
                 'user_id' => 1,
-                'maximum_amount' => 100,
+                'maximum_amount' => 12000,
+                'amount_remaining' => 12000,
             ])->save();
         }
 
@@ -24,7 +25,8 @@ class UserWalletSeeder extends Seeder
             $model = new UserWallet();
             $model->fill([
                 'user_id' => 2,
-                'maximum_amount' => 150,
+                'maximum_amount' => 1500,
+                'amount_remaining' => 1500,
             ])->save();
         }
     }

@@ -2,7 +2,7 @@
 
 namespace App\Services\Bid\Validations\Rules;
 
-use App\Services\UserWallet\Queries\GetWalletAmount;
+use App\Services\UserWallet\Queries\GetUserWallet;
 use Exception;
 
 class HasEnoughCreditForAutoBid
@@ -23,8 +23,10 @@ class HasEnoughCreditForAutoBid
     public function execute()
     {
         // if user does not have enough credit he cannot bid.
-        if ((new GetWalletAmount($this->userId))->execute() < $this->amount) {
-            throw new Exception('User has not enough credit to bid.');
+        $wallet = (new GetUserWallet($this->userId))->execute();
+
+        if ($wallet->amount_remaining < $this->amount) {
+            throw new Exception('Your current amount is not enough for auto bid.');
         }
 
         return true;

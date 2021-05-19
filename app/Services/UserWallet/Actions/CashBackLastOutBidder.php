@@ -23,8 +23,10 @@ class CashBackLastOutBidder
         $wallet = UserWallet::where(['user_id' => $lastBidder->user_id])->first();
 
         if ($wallet) {
-            $wallet->maximum_amount += $amount - 1;
+            $wallet->amount_remaining += $amount - 1;
             $wallet->save();
+
+
         }
 
         return true;

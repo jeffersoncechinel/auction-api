@@ -9,11 +9,13 @@
     "license": "MIT",
     "require": {
         "php": "^7.2",
+        "beyondcode/laravel-websockets": "^1.12",
         "fideloper/proxy": "^4.0",
         "jeffersoncechinel/task-locker": "dev-master",
         "laravel/framework": "~6.18",
         "laravel/tinker": "^1.0",
-        "laravel/ui": "^1.0"
+        "laravel/ui": "^1.0",
+        "pusher/pusher-php-server": "~4.0"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "2.8",

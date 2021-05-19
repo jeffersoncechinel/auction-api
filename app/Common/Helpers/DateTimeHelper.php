@@ -7,8 +7,7 @@ use DateTimeZone;
 
 class DateTimeHelper
 {
-
-    public static function datetimeFromUTC($datetime, $timezone = 'America/New_York')
+    public static function datetimeFromUTC($datetime, $timezone = 'America/Sao_Paulo')
     {
         $date = new DateTime($datetime, new DateTimeZone('UTC'));
         $date->setTimezone(new DateTimeZone($timezone));

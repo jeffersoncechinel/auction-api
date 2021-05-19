@@ -2,15 +2,18 @@
 
 namespace App\Services\UserAutoBidding\Actions;
 
+use App\Events\Bid\SendMessage;
 use App\Models\Bid;
-use App\Models\Item;
 use App\Services\Bid\Validations\Rules\HasEnoughCreditForAutoBid;
 use App\Services\Bid\Validations\Rules\IsBiddingOpen;
 use App\Services\Bid\Validations\Rules\IsUserOutBid;
 use App\Services\Item\Queries\GetCurrentPrice;
+use App\Services\Item\Queries\GetItemDetail;
+use App\Services\UserWallet\Actions\CashBackLastOutBidder;
 use App\Services\UserWallet\Actions\DecrementAmount;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Throwable;
 
 class Create
@@ -24,7 +27,6 @@ class Create
 
     /**
      * @param $itemId
-     * @param int $amount
      * @return bool
      * @throws Exception
      */
@@ -37,6 +39,7 @@ class Create
             (new IsBiddingOpen($itemId))->execute();
             (new IsUserOutBid($itemId, $this->userId))->execute();
             (new HasEnoughCreditForAutoBid($amount, $this->userId))->execute();
+            (new CashBackLastOutBidder())->execute($amount, $itemId);
 
             $this->saveBid($itemId, $amount);
 
@@ -69,5 +72,15 @@ class Create
 
         $model->item->final_price = $amount;
         $model->item->save();
+        $model->item->refresh();
+
+        $data = (new GetItemDetail($this->userId))->execute($model->item->id);
+        $data = [
+            'id' => $data['id'],
+            'final_price' => $data['final_price'],
+            'last_bid_by' => $data['last_bid_by'],
+        ];
+
+        Event::dispatch(new SendMessage($data));
     }
 }

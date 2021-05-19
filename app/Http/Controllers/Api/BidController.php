@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\Bid\SendMessage;
 use App\Http\Controllers\Controller;
 use App\Models\Bid;
 use App\Services\Bid\Actions\Create;
@@ -9,6 +10,7 @@ use App\Services\Item\Queries\GetItemDetail;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
 
 class BidController extends Controller
 {
@@ -34,6 +36,8 @@ class BidController extends Controller
         }
 
         $data = (new GetItemDetail(Auth::id()))->execute($data['item_id']);
+
+        Event::dispatch(new SendMessage($data));
 
         return $this->successResponse($data);
     }
